@@ -64,9 +64,10 @@ function doPost(e) {
       if (!name || labels.indexOf(undefined) >= 0) return reply_({ ok: false, error: 'réponse incomplète' });
       if (index < 0 && ids.length >= MAX_ROWS) return reply_({ ok: false, error: 'liste pleine' });
       const row = index >= 0 ? index + 2 : last + 1;
-      // Plain-text format: a name starting with = stays text and never runs as a formula.
+      // A leading apostrophe keeps a name like =1+1 as text: Sheets would run it as a formula.
+      const safeName = /^[=+\-@']/.test(name) ? "'" + name : name;
       sheet.getRange(row, 1, 1, COLUMNS).setNumberFormat('@')
-        .setValues([[id, name].concat(labels, [new Date().toISOString()])]);
+        .setValues([[id, safeName].concat(labels, [new Date().toISOString()])]);
     } else {
       return reply_({ ok: false, error: 'action inconnue' });
     }
