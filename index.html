@@ -1,0 +1,617 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Noël danois à Genève</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caprasimo&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: a Dannebrog-red band with a hanging woven paper heart (julehjerte), then the story beside the form, then the answers table at full width. */
+:root {
+  --bg: #fbf8f8; --fg: #2a1215; --muted: #6f5a5c; --surface: #ffffff; --soft: #f5e9ea; --line: #e6d9da;
+  --band: #b3122a; --on-band: #fff7f5; --on-band-soft: #fbdcd9;
+  --accent: #b3122a; --on-accent: #ffffff;
+  --yes: #1f6b52; --on-yes: #ffffff; --maybe: #9a5d00; --on-maybe: #ffffff; --no: #6f5a5c; --on-no: #ffffff;
+  --heart-a: #fff7f5; --heart-b: #5e0916;
+  --display: "Caprasimo", "Cooper Black", Georgia, serif;
+  --body: "Figtree", -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #1a0f11; --fg: #f6eaea; --muted: #bfaaac; --surface: #26171a; --soft: #341e22; --line: #472c31;
+  --band: #8e1023; --on-band: #fff7f5; --on-band-soft: #f6cfcf;
+  --accent: #f0788a; --on-accent: #2a0a10;
+  --yes: #6fd3ae; --on-yes: #0c2a20; --maybe: #edb458; --on-maybe: #2e1d00; --no: #8d797b; --on-no: #1a0f11;
+  color-scheme: dark;
+} }
+:root[data-theme="dark"] {
+  --bg: #1a0f11; --fg: #f6eaea; --muted: #bfaaac; --surface: #26171a; --soft: #341e22; --line: #472c31;
+  --band: #8e1023; --on-band: #fff7f5; --on-band-soft: #f6cfcf;
+  --accent: #f0788a; --on-accent: #2a0a10;
+  --yes: #6fd3ae; --on-yes: #0c2a20; --maybe: #edb458; --on-maybe: #2e1d00; --no: #8d797b; --on-no: #1a0f11;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 400 1.0625rem/1.6 var(--body); }
+.wrap { max-width: 1040px; margin-inline: auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2 { font-family: var(--display); font-weight: 400; line-height: 1.1; text-wrap: balance; margin: 0; }
+h2 { font-size: 1.85rem; }
+h3 { font-size: 1.05rem; font-weight: 700; margin: 0; line-height: 1.35; }
+p { margin: 0; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.hero { background: var(--band); color: var(--on-band); overflow: hidden; }
+.hero-in { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px; align-items: start; padding-block: 40px 44px; }
+.hero-text { display: grid; gap: 16px; justify-items: start; min-width: 0; padding-top: 12px; }
+.eyebrow { font-weight: 600; letter-spacing: .06em; color: var(--on-band-soft); }
+h1 { font-size: clamp(2.6rem, 8vw, 4.6rem); }
+.lede { max-width: 34rem; font-size: 1.2rem; line-height: 1.5; }
+.cta { display: inline-block; background: var(--on-band); color: var(--heart-b); font-weight: 700; padding: 12px 20px; border-radius: 6px; text-decoration: none; margin-top: 6px; }
+.cta:focus-visible { outline-color: var(--on-band); }
+.garland { width: clamp(130px, 24vw, 250px); margin-top: -40px; transform-origin: 50% 0; animation: sway 7s ease-in-out infinite alternate; }
+.garland svg { display: block; width: 100%; height: auto; overflow: visible; }
+.thread { stroke: var(--on-band-soft); stroke-width: .8; }
+.heart-a { fill: var(--heart-a); }
+.heart-b { fill: var(--heart-b); }
+@keyframes sway { from { transform: rotate(-2.5deg); } to { transform: rotate(2.5deg); } }
+
+.split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 25rem); gap: 48px; align-items: start; padding-block: 44px; }
+.story { display: grid; gap: 40px; min-width: 0; }
+.story section { display: grid; gap: 14px; max-width: 36rem; }
+.steps { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 18px; }
+.steps li { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 14px; align-items: start; }
+.die { display: block; width: 44px; height: 44px; }
+.die-body { fill: var(--surface); stroke: var(--accent); stroke-width: 2; }
+.die-pip { fill: var(--accent); }
+
+.roll { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; background: var(--soft); border-radius: 8px; padding: 14px 16px; }
+.roll button { display: inline-flex; align-items: center; gap: 10px; font: 700 1rem var(--body); color: var(--fg); background: none; border: 0; padding: 0; cursor: pointer; }
+.roll button:hover span { text-decoration: underline; }
+.roll output { flex: 1 1 12rem; min-width: 0; color: var(--muted); }
+.rolling .die { animation: tumble .45s ease-out; }
+@keyframes tumble { from { transform: rotate(-300deg) scale(.7); } to { transform: none; } }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 22px; display: grid; gap: 18px; min-width: 0; scroll-margin-top: 16px; }
+.field { display: grid; gap: 6px; }
+.field label { font-weight: 600; }
+input[type="text"] { width: 100%; font: 400 1.0625rem var(--body); color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; }
+.hint { font-size: .925rem; color: var(--muted); }
+.weekends { display: grid; gap: 14px; }
+.weekend { display: grid; gap: 6px; padding-top: 14px; border-top: 1px solid var(--line); }
+.day { display: grid; grid-template-columns: 3.9rem minmax(0, 1fr); gap: 8px; align-items: center; }
+.day-label { font-weight: 600; font-variant-numeric: tabular-nums; }
+.choices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.choices label { display: block; cursor: pointer; }
+.choices input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.choices span { display: block; text-align: center; font-size: .9rem; font-weight: 500; padding: 8px 2px; border: 1px solid var(--line); border-radius: 6px; }
+.choices label:hover span { border-color: var(--muted); }
+.choices input:focus-visible + span { outline: 3px solid var(--accent); outline-offset: 2px; }
+.choices input:checked + span { font-weight: 700; border-color: transparent; }
+.choices input[value="oui"]:checked + span { background: var(--yes); color: var(--on-yes); }
+.choices input[value="peutetre"]:checked + span { background: var(--maybe); color: var(--on-maybe); }
+.choices input[value="non"]:checked + span { background: var(--no); color: var(--on-no); }
+.actions { display: grid; gap: 10px; }
+.primary { font: 700 1.0625rem var(--body); background: var(--accent); color: var(--on-accent); border: 0; border-radius: 6px; padding: 12px 16px; cursor: pointer; }
+.primary[disabled] { opacity: .6; cursor: progress; }
+.quiet { font: 500 .95rem var(--body); color: var(--muted); background: none; border: 0; padding: 4px 0; text-decoration: underline; cursor: pointer; justify-self: start; }
+#statut { font-weight: 600; }
+#statut.ok { color: var(--yes); }
+#statut.err { color: var(--accent); }
+#statut:empty { display: none; }
+
+.answers { display: grid; gap: 14px; padding-block: 8px 56px; }
+#resume { max-width: 40rem; }
+.scroller:empty { display: none; }
+.scroller { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+table { width: 100%; min-width: 820px; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+th, td { padding: 10px 8px; text-align: center; border-bottom: 1px solid var(--line); }
+tr:last-child td { border-bottom: 0; }
+th:first-child, td:first-child { text-align: left; }
+thead th { font-weight: 700; vertical-align: top; white-space: nowrap; }
+thead small { display: block; font-size: .85rem; font-weight: 500; color: var(--muted); }
+td:first-child { font-weight: 600; overflow-wrap: anywhere; }
+.best { background: var(--soft); }
+.starts { border-left: 2px solid var(--line); }
+.mark { display: inline-block; min-width: 2em; line-height: 1.7; font-weight: 700; border-radius: 4px; font-size: .95rem; }
+.mark-oui { background: var(--yes); color: var(--on-yes); }
+.mark-peutetre { background: var(--maybe); color: var(--on-maybe); }
+.mark-non { color: var(--muted); }
+.edit { font: 500 .9rem var(--body); color: var(--muted); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; }
+.empty { padding: 26px 18px; color: var(--muted); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+@media (max-width: 820px) {
+  .split { grid-template-columns: minmax(0, 1fr); gap: 36px; padding-block: 32px; }
+  .story section { max-width: none; }
+}
+@media (max-width: 520px) {
+  .hero-in { grid-template-columns: minmax(0, 1fr) 96px; gap: 8px; padding-block: 28px 32px; }
+  .garland { width: 96px; margin-top: -28px; }
+  .lede { font-size: 1.1rem; }
+  .card { padding: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .garland, .rolling .die { animation: none; }
+}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap hero-in">
+    <div class="hero-text">
+      <p class="eyebrow" lang="da">Glædelig jul</p>
+      <h1>Un Noël danois à Genève</h1>
+      <p class="lede">Une soirée chaleureuse entre amis, autour d'une fondue ou d'une raclette. Dis-nous quelles dates te conviennent.</p>
+      <a class="cta" href="#dispos">Donner mes disponibilités</a>
+    </div>
+    <div class="garland" aria-hidden="true">
+      <svg viewBox="0 0 100 150">
+        <defs>
+          <pattern id="tresse" width="25.46" height="25.46" patternUnits="userSpaceOnUse" patternTransform="translate(50 58) rotate(45)">
+            <rect class="heart-a" width="25.46" height="25.46"/>
+            <rect class="heart-b" width="12.73" height="12.73"/>
+            <rect class="heart-b" x="12.73" y="12.73" width="12.73" height="12.73"/>
+          </pattern>
+        </defs>
+        <line class="thread" x1="50" y1="0" x2="50" y2="58"/>
+        <circle class="heart-a" cx="32" cy="76" r="25.46"/>
+        <circle class="heart-b" cx="68" cy="76" r="25.46"/>
+        <path d="M50 130 L14 94 L50 58 L86 94 Z" fill="url(#tresse)"/>
+      </svg>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="split">
+    <div class="story">
+      <section>
+        <h2>Le principe</h2>
+        <p>On se retrouve pour un Noël chaleureux, à table, autour d'une fondue ou d'une raclette. Et comme au Danemark, on joue au pakkeleg, un jeu de dés où l'on se vole des cadeaux.</p>
+      </section>
+
+      <section>
+        <h2 lang="da">Le pakkeleg</h2>
+        <h3>Ce que tu apportes</h3>
+        <p>Deux ou trois petits cadeaux emballés : du chocolat, des bonbons, un objet rigolo. Compte 3 à 4 francs par cadeau. Tout va au milieu de la table.</p>
+        <h3>Comment on joue</h3>
+        <ol class="steps">
+          <li>
+            <span data-die="1"></span>
+            <div>
+              <h3>Premier tour, on distribue</h3>
+              <p>Chacun son tour, on lance le dé. Un 6 permet de prendre un paquet au milieu. On continue jusqu'à ce qu'il n'en reste plus.</p>
+            </div>
+          </li>
+          <li>
+            <span data-die="2"></span>
+            <div>
+              <h3>Deuxième tour, on vole</h3>
+              <p>On règle un minuteur secret sur 10 à 15 minutes. On relance le dé, et chaque 6 permet de voler un paquet à n'importe quel joueur.</p>
+            </div>
+          </li>
+          <li>
+            <span data-die="3"></span>
+            <div>
+              <h3>On ouvre</h3>
+              <p>Quand le minuteur sonne, le jeu s'arrête. Chacun déballe les paquets qu'il a devant lui.</p>
+            </div>
+          </li>
+        </ol>
+        <div class="roll" id="essai">
+          <button type="button" id="lancer"><span data-die="6" id="de"></span><span>Lancer le dé</span></button>
+          <output id="resultat" aria-live="polite">Il te faut un 6 pour prendre un paquet.</output>
+        </div>
+      </section>
+    </div>
+
+    <form class="card" id="dispos" novalidate>
+      <h2>Tes disponibilités</h2>
+      <div class="field">
+        <label for="nom">Ton nom</label>
+        <input type="text" id="nom" name="nom" maxlength="60" autocomplete="given-name" placeholder="Prénom">
+        <p class="hint" id="deja" hidden></p>
+      </div>
+      <div class="weekends" id="weekends"></div>
+      <div class="actions">
+        <button class="primary" type="submit" id="envoyer">Envoyer mes disponibilités</button>
+        <p id="statut" role="status" aria-live="polite"></p>
+        <button class="quiet" type="button" id="retirer" hidden>Retirer ma réponse</button>
+      </div>
+    </form>
+  </div>
+
+  <section class="answers" aria-labelledby="titre-reponses">
+    <h2 id="titre-reponses">Les réponses</h2>
+    <p id="resume">Chargement des réponses…</p>
+    <div class="scroller" id="tableau" tabindex="0" aria-labelledby="titre-reponses"></div>
+  </section>
+</main>
+
+<script>
+(function () {
+  // Day ids stay fixed: a label can change without touching stored answers.
+  // Adresse de l'application Web Apps Script (voir apps-script/Code.gs).
+  const API_URL = '';
+
+  const DAYS = [
+    { id: 'd1', label: '22 nov.', weekend: 1 },
+    { id: 'd2', label: '23 nov.', weekend: 1 },
+    { id: 'd3', label: '29 nov.', weekend: 2 },
+    { id: 'd4', label: '30 nov.', weekend: 2 },
+    { id: 'd5', label: '6 déc.', weekend: 3 },
+    { id: 'd6', label: '7 déc.', weekend: 3 },
+    { id: 'd7', label: '13 déc.', weekend: 4 },
+    { id: 'd8', label: '14 déc.', weekend: 4 },
+    { id: 'd9', label: '20 déc.', weekend: 5 },
+    { id: 'd10', label: '21 déc.', weekend: 5 }
+  ];
+  const CHOICES = [
+    { value: 'oui', label: 'Dispo', glyph: '✓' },
+    { value: 'peutetre', label: 'Peut-être', glyph: '?' },
+    { value: 'non', label: 'Pas dispo', glyph: '–' }
+  ];
+  const $ = (id) => document.getElementById(id);
+  const SVG = 'http://www.w3.org/2000/svg';
+  const REMEMBER = 'noel-danois-nom';
+
+  /* ---------- Dice ---------- */
+  const PIPS = {
+    1: [[24, 24]],
+    2: [[15, 15], [33, 33]],
+    3: [[15, 15], [24, 24], [33, 33]],
+    4: [[15, 15], [33, 15], [15, 33], [33, 33]],
+    5: [[15, 15], [33, 15], [24, 24], [15, 33], [33, 33]],
+    6: [[15, 13], [33, 13], [15, 24], [33, 24], [15, 35], [33, 35]]
+  };
+  function drawDie(host, n) {
+    const svg = document.createElementNS(SVG, 'svg');
+    svg.setAttribute('viewBox', '0 0 48 48');
+    svg.setAttribute('class', 'die');
+    svg.setAttribute('aria-hidden', 'true');
+    const body = document.createElementNS(SVG, 'rect');
+    for (const [k, v] of [['x', 3], ['y', 3], ['width', 42], ['height', 42], ['rx', 9], ['class', 'die-body']]) body.setAttribute(k, v);
+    svg.append(body);
+    for (const [cx, cy] of PIPS[n]) {
+      const pip = document.createElementNS(SVG, 'circle');
+      for (const [k, v] of [['cx', cx], ['cy', cy], ['r', 4], ['class', 'die-pip']]) pip.setAttribute(k, v);
+      svg.append(pip);
+    }
+    host.replaceChildren(svg);
+  }
+  document.querySelectorAll('[data-die]').forEach((el) => drawDie(el, Number(el.dataset.die)));
+
+  $('lancer').addEventListener('click', () => {
+    const n = 1 + Math.floor(Math.random() * 6);
+    drawDie($('de'), n);
+    const box = $('essai');
+    box.classList.remove('rolling');
+    void box.offsetWidth;
+    box.classList.add('rolling');
+    $('resultat').textContent = n === 6
+      ? 'Un 6 ! Tu prends un paquet.'
+      : 'Un ' + n + ', pas de chance. Le dé passe à ton voisin.';
+  });
+
+  /* ---------- Form ---------- */
+  let group = null;
+  let groupOf = null;
+  for (const day of DAYS) {
+    if (day.weekend !== groupOf) {
+      groupOf = day.weekend;
+      group = document.createElement('div');
+      group.className = 'weekend';
+      $('weekends').append(group);
+    }
+    const line = document.createElement('div');
+    line.className = 'day';
+    line.setAttribute('role', 'radiogroup');
+    line.setAttribute('aria-labelledby', 'label-' + day.id);
+    const title = document.createElement('span');
+    title.className = 'day-label';
+    title.id = 'label-' + day.id;
+    title.textContent = day.label;
+    const row = document.createElement('div');
+    row.className = 'choices';
+    for (const c of CHOICES) {
+      const label = document.createElement('label');
+      const input = document.createElement('input');
+      input.type = 'radio';
+      input.name = day.id;
+      input.id = day.id + '-' + c.value;
+      input.value = c.value;
+      const span = document.createElement('span');
+      span.textContent = c.label;
+      label.append(input, span);
+      row.append(label);
+    }
+    line.append(title, row);
+    group.append(line);
+  }
+
+  const form = $('dispos');
+  let people = new Map();
+  let mode = API_URL ? 'live' : 'closed';
+  let dirty = false;
+  let confirming = false;
+
+  function slugOf(name) {
+    const base = name.normalize('NFD').replace(/\p{M}+/gu, '').toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60);
+    if (base) return base;
+    return 'p-' + Array.from(name).slice(0, 20).map((c) => c.codePointAt(0).toString(16)).join('-');
+  }
+  function readAnswers() {
+    const out = {};
+    for (const day of DAYS) {
+      const picked = form.querySelector('input[name="' + day.id + '"]:checked');
+      if (picked) out[day.id] = picked.value;
+    }
+    return out;
+  }
+  function fillAnswers(answers) {
+    for (const day of DAYS) {
+      for (const c of CHOICES) $(day.id + '-' + c.value).checked = answers[day.id] === c.value;
+    }
+  }
+  function say(text, kind) {
+    const s = $('statut');
+    s.textContent = text;
+    s.className = kind || '';
+  }
+  function remember(name) {
+    try { localStorage.setItem(REMEMBER, name); } catch (e) { /* optional */ }
+  }
+  function remembered() {
+    try { return localStorage.getItem(REMEMBER) || ''; } catch (e) { return ''; }
+  }
+  function joinLabels(list) {
+    if (list.length < 2) return list.join('');
+    return list.slice(0, -1).join(', ') + ' et ' + list[list.length - 1];
+  }
+
+  function syncNameHint() {
+    const name = $('nom').value.trim();
+    const known = name && mode === 'live' && people.has(slugOf(name));
+    $('deja').hidden = !known;
+    $('deja').textContent = known ? 'Ce nom a déjà répondu. Envoyer remplacera sa réponse.' : '';
+    $('retirer').hidden = !known;
+    $('envoyer').textContent = known ? 'Mettre à jour mes disponibilités' : 'Envoyer mes disponibilités';
+    if (!known) resetRemove();
+  }
+  function resetRemove() {
+    confirming = false;
+    $('retirer').textContent = 'Retirer ma réponse';
+  }
+  function loadPerson(slug, focus) {
+    const p = people.get(slug);
+    if (!p) return;
+    $('nom').value = p.name;
+    fillAnswers(p.answers);
+    dirty = false;
+    say('');
+    syncNameHint();
+    if (focus) {
+      form.scrollIntoView({ block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+      $('nom').focus({ preventScroll: true });
+    }
+  }
+
+  form.addEventListener('change', () => { dirty = true; say(''); });
+  $('nom').addEventListener('input', () => { say(''); syncNameHint(); });
+  $('nom').addEventListener('blur', () => {
+    const name = $('nom').value.trim();
+    if (name && !Object.keys(readAnswers()).length) loadPerson(slugOf(name), false);
+  });
+
+  form.addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const name = $('nom').value.trim();
+    if (!name) {
+      say('Écris ton nom pour qu\'on sache qui répond.', 'err');
+      $('nom').focus();
+      return;
+    }
+    const answers = readAnswers();
+    const missing = DAYS.filter((day) => !answers[day.id]);
+    if (missing.length) {
+      say(missing.length > 3
+        ? 'Il manque encore ' + missing.length + ' dates, à commencer par le ' + missing[0].label
+        : 'Il manque ta réponse pour ' + joinLabels(missing.map((day) => day.label)), 'err');
+      form.querySelector('input[name="' + missing[0].id + '"]').focus();
+      return;
+    }
+    remember(name);
+    if (mode !== 'live') {
+      say('Les réponses ne sont pas encore ouvertes. Réessaie un peu plus tard.', 'err');
+      return;
+    }
+    $('envoyer').disabled = true;
+    try {
+      await request({ action: 'set', id: slugOf(name), name, answers });
+      dirty = false;
+      say('C\'est noté, ' + name + '. Merci !', 'ok');
+      syncNameHint();
+    } catch (e) {
+      say('La réponse n\'est pas partie. Vérifie ta connexion et réessaie.', 'err');
+    } finally {
+      $('envoyer').disabled = false;
+    }
+  });
+
+  $('retirer').addEventListener('click', async () => {
+    const name = $('nom').value.trim();
+    if (!confirming) {
+      confirming = true;
+      $('retirer').textContent = 'Confirmer : retirer la réponse de ' + name;
+      return;
+    }
+    try {
+      await request({ action: 'delete', id: slugOf(name) });
+      fillAnswers({});
+      $('nom').value = '';
+      dirty = false;
+      say('Réponse retirée.', 'ok');
+    } catch (e) {
+      say('La réponse n\'a pas pu être retirée. Réessaie.', 'err');
+    }
+    resetRemove();
+    syncNameHint();
+  });
+
+  /* ---------- Answers ---------- */
+  function tally(list) {
+    return DAYS.map((day) => {
+      let yes = 0, maybe = 0;
+      for (const p of list) {
+        if (p.answers[day.id] === 'oui') yes++;
+        if (p.answers[day.id] === 'peutetre') maybe++;
+      }
+      return { id: day.id, label: day.label, weekend: day.weekend, yes, maybe };
+    });
+  }
+  function dispos(n) { return n + ' dispo' + (n > 1 ? 's' : ''); }
+  function counts(t) {
+    return dispos(t.yes) + (t.maybe ? ', ' + t.maybe + ' peut-être' : '');
+  }
+  function renderAnswers() {
+    const box = $('tableau');
+    const list = [...people.entries()].map(([slug, p]) => ({ slug, ...p }))
+      .sort((a, b) => String(a.at).localeCompare(String(b.at)));
+    if (!list.length) {
+      const empty = document.createElement('p');
+      empty.className = 'empty';
+      empty.textContent = 'Le tableau se remplira avec les noms et les dates de chacun.';
+      box.replaceChildren(empty);
+      $('resume').textContent = 'Personne n\'a encore répondu. Ajoute ta réponse pour lancer le tableau.';
+      return;
+    }
+    const totals = tally(list);
+    const top = totals.reduce((m, t) => Math.max(m, t.yes * 100 + t.maybe), 0);
+    const best = new Set(top ? totals.filter((t) => t.yes * 100 + t.maybe === top).map((t) => t.id) : []);
+    const answered = list.length + (list.length > 1 ? ' réponses' : ' réponse');
+    const winners = totals.filter((t) => best.has(t.id));
+    if (!winners.length) {
+      $('resume').textContent = answered + ', et aucune date ne convient pour l\'instant.';
+    } else if (winners.length === 1) {
+      $('resume').textContent = answered + '. Pour l\'instant, le ' + winners[0].label + ' réunit le plus de monde, avec ' + counts(winners[0]) + '.';
+    } else {
+      $('resume').textContent = answered + '. Pour l\'instant, ' + joinLabels(winners.map((t) => t.label)) + ' sont à égalité, avec ' + counts(winners[0]) + '.';
+    }
+
+    const firstOfWeekend = new Set(DAYS.filter((day, i) => !i || DAYS[i - 1].weekend !== day.weekend).map((day) => day.id));
+    const cellClass = (id) => [best.has(id) ? 'best' : '', firstOfWeekend.has(id) ? 'starts' : ''].join(' ').trim();
+    const table = document.createElement('table');
+    const thead = table.createTHead().insertRow();
+    const corner = document.createElement('th');
+    corner.scope = 'col';
+    corner.textContent = 'Nom';
+    thead.append(corner);
+    for (const t of totals) {
+      const th = document.createElement('th');
+      th.scope = 'col';
+      th.className = cellClass(t.id);
+      th.textContent = t.label;
+      const sub = document.createElement('small');
+      sub.textContent = t.yes + ' ✓' + (t.maybe ? ' · ' + t.maybe + ' ?' : '');
+      th.append(sub);
+      thead.append(th);
+    }
+    const blank = document.createElement('th');
+    blank.scope = 'col';
+    const blankText = document.createElement('span');
+    blankText.className = 'sr';
+    blankText.textContent = 'Modifier';
+    blank.append(blankText);
+    thead.append(blank);
+
+    const body = table.createTBody();
+    for (const p of list) {
+      const row = body.insertRow();
+      row.insertCell().textContent = p.name;
+      for (const day of DAYS) {
+        const cell = row.insertCell();
+        cell.className = cellClass(day.id);
+        const c = CHOICES.find((x) => x.value === p.answers[day.id]);
+        const mark = document.createElement('span');
+        if (c) {
+          mark.className = 'mark mark-' + c.value;
+          mark.setAttribute('aria-label', c.label);
+          mark.textContent = c.glyph;
+        } else {
+          mark.className = 'mark mark-non';
+          mark.setAttribute('aria-label', 'Sans réponse');
+          mark.textContent = ' ';
+        }
+        cell.append(mark);
+      }
+      const act = row.insertCell();
+      if (mode === 'live') {
+        const edit = document.createElement('button');
+        edit.type = 'button';
+        edit.className = 'edit';
+        edit.textContent = 'Modifier';
+        edit.setAttribute('aria-label', 'Modifier la réponse de ' + p.name);
+        edit.addEventListener('click', () => loadPerson(p.slug, true));
+        act.append(edit);
+      }
+    }
+    box.replaceChildren(table);
+  }
+
+  /* ---------- Shared sheet ---------- */
+  let lastRows = null;
+  let sent = 0;
+  let applied = 0;
+
+  function applyRows(rows) {
+    const raw = JSON.stringify(rows);
+    if (raw === lastRows) return;
+    lastRows = raw;
+    const next = new Map();
+    for (const r of rows) {
+      if (r && typeof r.id === 'string' && typeof r.name === 'string' && r.answers && typeof r.answers === 'object') {
+        next.set(r.id, { name: r.name.slice(0, 60), answers: r.answers, at: r.at || '' });
+      }
+    }
+    people = next;
+    renderAnswers();
+    if (!dirty && !Object.keys(readAnswers()).length && $('nom').value.trim()) {
+      loadPerson(slugOf($('nom').value.trim()), false);
+    }
+    syncNameHint();
+  }
+  // A plain-text body keeps the POST a simple request, which Apps Script can answer.
+  async function request(body) {
+    const n = ++sent;
+    const res = await fetch(API_URL, body ? { method: 'POST', body: JSON.stringify(body) } : undefined);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'refus');
+    if (n > applied) {
+      applied = n;
+      applyRows(data.reponses || []);
+    }
+  }
+  function refresh() {
+    return request().catch(() => {
+      if (lastRows === null) $('resume').textContent = 'Les réponses ne sont pas joignables pour l\'instant. Recharge la page dans un moment.';
+    });
+  }
+
+  const name = remembered();
+  if (name) $('nom').value = name;
+  if (mode === 'closed') {
+    $('resume').textContent = 'Le tableau s\'ouvrira très bientôt.';
+    return;
+  }
+  refresh();
+  setInterval(() => { if (!document.hidden) refresh(); }, 30000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
+})();
+</script>
+</body>
+</html>
