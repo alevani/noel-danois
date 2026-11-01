@@ -73,7 +73,7 @@ h1 { font-size: clamp(2.6rem, 8vw, 4.6rem); }
 .rolling .die { animation: tumble .45s ease-out; }
 @keyframes tumble { from { transform: rotate(-300deg) scale(.7); } to { transform: none; } }
 
-.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 22px; display: grid; gap: 18px; min-width: 0; scroll-margin-top: 16px; }
+.card { position: relative; z-index: 6; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 22px; display: grid; gap: 18px; min-width: 0; scroll-margin-top: 16px; }
 .field { display: grid; gap: 6px; }
 .field label { font-weight: 600; }
 input[type="text"] { width: 100%; font: 400 1.0625rem var(--body); color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; }
@@ -193,7 +193,7 @@ td:first-child { font-weight: 600; overflow-wrap: anywhere; }
             <span data-die="2"></span>
             <div>
               <h3>Deuxième tour, on vole</h3>
-              <p>On règle un minuteur secret sur 10 à 15 minutes. On relance le dé, et chaque 6 permet de voler un paquet à n'importe quel joueur.</p>
+              <p>On règle un minuteur secret sur 10 à 15 minutes. On relance le dé. Un 6 permet de voler un paquet à n'importe quel joueur, mais un 2 t'oblige à en donner un.</p>
             </div>
           </li>
           <li>
