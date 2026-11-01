@@ -4,7 +4,23 @@ const LABELS = ['ven. 20 nov.', 'sam. 21 nov.', 'ven. 27 nov.', 'sam. 28 nov.', 
 const DAYS = ['d1', 'd2', 'd3', 'd4', 'd5', 'd6', 'd7', 'd8', 'd9', 'd10'];
 const CHOICES = { oui: 'Dispo', peutetre: 'Peut-être', non: 'Pas dispo' };
 const COLUMNS = DAYS.length + 3; // id, nom, dates, mise à jour
+const CODE_COLUMN = COLUMNS + 1; // rows_() stops before it, so codes never leave the sheet
 const MAX_ROWS = 200;
+
+function newCode_() {
+  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const hex = Utilities.getUuid().replace(/-/g, '').slice(-16);
+  let code = '';
+  for (let i = 0; i < 16; i += 2) {
+    code += alphabet[parseInt(hex.substr(i, 2), 16) % 32];
+    if (i === 6) code += '-';
+  }
+  return code;
+}
+
+function writeCode_(sheet, row, code) {
+  sheet.getRange(row, CODE_COLUMN).setNumberFormat('@').setValue(code);
+}
 
 function sheet_() {
   const book = SpreadsheetApp.getActiveSpreadsheet();
@@ -14,6 +30,13 @@ function sheet_() {
     sheet.getRange(1, 1, 1, COLUMNS).setNumberFormat('@')
       .setValues([['id', 'Nom'].concat(LABELS, ['Mis à jour'])]).setFontWeight('bold');
     sheet.setFrozenRows(1);
+  }
+  // First run with codes: add the column and give existing answers a code.
+  if (sheet.getRange(1, CODE_COLUMN).getDisplayValue() !== 'Code') {
+    sheet.getRange(1, CODE_COLUMN).setNumberFormat('@').setValue('Code').setFontWeight('bold');
+    for (let row = 2; row <= sheet.getLastRow(); row++) {
+      if (sheet.getRange(row, 1).getDisplayValue()) writeCode_(sheet, row, newCode_());
+    }
   }
   return sheet;
 }
@@ -54,6 +77,12 @@ function doPost(e) {
     const last = sheet.getLastRow();
     const ids = last > 1 ? sheet.getRange(2, 1, last - 1, 1).getDisplayValues().map(function (r) { return r[0]; }) : [];
     const index = ids.indexOf(id);
+    if (index >= 0) {
+      const stored = sheet.getRange(index + 2, CODE_COLUMN).getDisplayValue();
+      const given = String(input.code || '').trim().toUpperCase();
+      if (!stored || stored !== given) return reply_({ ok: false, error: 'code' });
+    }
+    let created = '';
 
     if (input.action === 'delete') {
       if (index >= 0) sheet.deleteRow(index + 2);
@@ -68,10 +97,14 @@ function doPost(e) {
       const safeName = /^[=+\-@']/.test(name) ? "'" + name : name;
       sheet.getRange(row, 1, 1, COLUMNS).setNumberFormat('@')
         .setValues([[id, safeName].concat(labels, [new Date().toISOString()])]);
+      if (index < 0) {
+        created = newCode_();
+        writeCode_(sheet, row, created);
+      }
     } else {
       return reply_({ ok: false, error: 'action inconnue' });
     }
-    return reply_({ ok: true, reponses: rows_(sheet) });
+    return reply_({ ok: true, code: created || undefined, reponses: rows_(sheet) });
   } catch (err) {
     return reply_({ ok: false, error: 'requête invalide' });
   } finally {
