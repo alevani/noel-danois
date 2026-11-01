@@ -66,12 +66,6 @@ h1 { font-size: clamp(2.6rem, 8vw, 4.6rem); }
 .die-body { fill: var(--surface); stroke: var(--accent); stroke-width: 2; }
 .die-pip { fill: var(--accent); }
 
-.roll { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; background: var(--soft); border-radius: 8px; padding: 14px 16px; }
-.roll button { display: inline-flex; align-items: center; gap: 10px; font: 700 1rem var(--body); color: var(--fg); background: none; border: 0; padding: 0; cursor: pointer; }
-.roll button:hover span { text-decoration: underline; }
-.roll output { flex: 1 1 12rem; min-width: 0; color: var(--muted); }
-.rolling .die { animation: tumble .45s ease-out; }
-@keyframes tumble { from { transform: rotate(-300deg) scale(.7); } to { transform: none; } }
 
 .card { position: relative; z-index: 6; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 22px; display: grid; gap: 18px; min-width: 0; scroll-margin-top: 16px; }
 .field { display: grid; gap: 6px; }
@@ -136,7 +130,7 @@ td:first-child { font-weight: 600; overflow-wrap: anywhere; }
   .card { padding: 16px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .garland, .rolling .die { animation: none; }
+  .garland { animation: none; }
 }
 </style>
 </head>
@@ -178,6 +172,7 @@ td:first-child { font-weight: 600; overflow-wrap: anywhere; }
 
       <section>
         <h2 lang="da">Le pakkeleg</h2>
+        <p>Le pakkeleg est une tradition danoise. C'est un jeu de dés et de vol de cadeaux, joué pendant les fêtes de Noël et les <span lang="da">julefrokost</span>, les repas de Noël entre amis ou collègues.</p>
         <h3>Ce que tu apportes</h3>
         <p>Deux ou trois petits cadeaux emballés : du chocolat, des bonbons, un objet rigolo ou une trouvaille de récup. Pas besoin de dépenser beaucoup, le plus important c'est d'être ensemble et de s'amuser. Tout va au milieu de la table.</p>
         <h3>Comment on joue</h3>
@@ -204,10 +199,6 @@ td:first-child { font-weight: 600; overflow-wrap: anywhere; }
             </div>
           </li>
         </ol>
-        <div class="roll" id="essai">
-          <button type="button" id="lancer"><span data-die="6" id="de"></span><span>Lancer le dé</span></button>
-          <output id="resultat" aria-live="polite">Il te faut un 6 pour prendre un paquet.</output>
-        </div>
       </section>
     </div>
 
@@ -267,10 +258,7 @@ td:first-child { font-weight: 600; overflow-wrap: anywhere; }
   const PIPS = {
     1: [[24, 24]],
     2: [[15, 15], [33, 33]],
-    3: [[15, 15], [24, 24], [33, 33]],
-    4: [[15, 15], [33, 15], [15, 33], [33, 33]],
-    5: [[15, 15], [33, 15], [24, 24], [15, 33], [33, 33]],
-    6: [[15, 13], [33, 13], [15, 24], [33, 24], [15, 35], [33, 35]]
+    3: [[15, 15], [24, 24], [33, 33]]
   };
   function drawDie(host, n) {
     const svg = document.createElementNS(SVG, 'svg');
@@ -288,18 +276,6 @@ td:first-child { font-weight: 600; overflow-wrap: anywhere; }
     host.replaceChildren(svg);
   }
   document.querySelectorAll('[data-die]').forEach((el) => drawDie(el, Number(el.dataset.die)));
-
-  $('lancer').addEventListener('click', () => {
-    const n = 1 + Math.floor(Math.random() * 6);
-    drawDie($('de'), n);
-    const box = $('essai');
-    box.classList.remove('rolling');
-    void box.offsetWidth;
-    box.classList.add('rolling');
-    $('resultat').textContent = n === 6
-      ? 'Un 6 ! Tu prends un paquet.'
-      : 'Un ' + n + ', pas de chance. Le dé passe à ton voisin.';
-  });
 
   /* ---------- Form ---------- */
   let group = null;
