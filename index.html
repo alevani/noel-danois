@@ -208,7 +208,7 @@ td:first-child { font-weight: 600; min-width: 7em; overflow-wrap: break-word; }
       <h2>Tes disponibilités</h2>
       <div class="field">
         <label for="nom">Ton nom</label>
-        <input type="text" id="nom" name="nom" maxlength="60" autocomplete="given-name" placeholder="Prénom">
+        <input type="text" id="nom" name="nom" maxlength="60" autocomplete="off" placeholder="Prénom">
         <p class="hint" id="deja" hidden></p>
       </div>
       <div class="field" id="champ-code" hidden>
@@ -383,6 +383,7 @@ td:first-child { font-weight: 600; min-width: 7em; overflow-wrap: break-word; }
   }
   function refused(slug) {
     saveCode(slug, '');
+    renderAnswers();
     say('Ce nom a déjà répondu et ce code ne correspond pas. Si c\'est toi, entre ton code. Sinon, ajoute une initiale à ton nom.', 'err');
     refresh();
     syncNameHint();
@@ -400,12 +401,13 @@ td:first-child { font-weight: 600; min-width: 7em; overflow-wrap: break-word; }
     $('deja').hidden = !known;
     $('deja').textContent = !known ? '' : own
       ? 'C\'est ta réponse, tu peux la modifier.'
-      : 'Ce nom a déjà répondu. Entre son code pour modifier sa réponse.';
+      : 'Ce nom a déjà répondu. Si c\'est toi, entre ton code. Sinon, ajoute une initiale à ton nom.';
     $('champ-code').hidden = !known || Boolean(own);
     $('code-perso').hidden = !own;
     $('code-valeur').textContent = own;
-    $('retirer').hidden = !known;
-    $('envoyer').textContent = known ? 'Mettre à jour mes disponibilités' : 'Envoyer mes disponibilités';
+    const canEdit = known && (own || $('code').value.trim());
+    $('retirer').hidden = !canEdit;
+    $('envoyer').textContent = canEdit ? 'Mettre à jour mes disponibilités' : 'Envoyer mes disponibilités';
     if (!known) resetRemove();
   }
   function resetRemove() {
@@ -423,12 +425,18 @@ td:first-child { font-weight: 600; min-width: 7em; overflow-wrap: break-word; }
     syncNameHint();
     if (focus) {
       form.scrollIntoView({ block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
-      ($('champ-code').hidden ? $('nom') : $('code')).focus({ preventScroll: true });
+      $('nom').focus({ preventScroll: true });
     }
   }
 
   form.addEventListener('change', () => { dirty = true; say(''); });
   $('nom').addEventListener('input', () => { $('code').value = ''; say(''); syncNameHint(); });
+  // On another device: a full code brings back the answers to edit. The script still checks it on send.
+  $('code').addEventListener('input', () => {
+    const p = people.get(slugOf($('nom').value.trim()));
+    if (p && /^[A-Za-z2-9]{4}-[A-Za-z2-9]{4}$/.test($('code').value.trim()) && !Object.keys(readAnswers()).length) fillAnswers(p.answers);
+    syncNameHint();
+  });
   $('copier-code').addEventListener('click', () => {
     const done = () => { $('copier-code').textContent = 'Code copié'; };
     const manual = () => { $('copier-code').textContent = 'Sélectionne le code pour le copier'; };
@@ -440,7 +448,7 @@ td:first-child { font-weight: 600; min-width: 7em; overflow-wrap: break-word; }
   });
   $('nom').addEventListener('blur', () => {
     const name = $('nom').value.trim();
-    if (name && !Object.keys(readAnswers()).length) loadPerson(slugOf(name), false);
+    if (name && savedCode(slugOf(name)) && !Object.keys(readAnswers()).length) loadPerson(slugOf(name), false);
   });
 
   form.addEventListener('submit', async (ev) => {
@@ -468,7 +476,7 @@ td:first-child { font-weight: 600; min-width: 7em; overflow-wrap: break-word; }
     const slug = slugOf(name);
     const code = codeFor(slug);
     if (people.has(slug) && !code) {
-      say('Ce nom a déjà répondu. Entre son code pour modifier sa réponse.', 'err');
+      say('Ce nom a déjà répondu. Si c\'est toi, entre ton code. Sinon, ajoute une initiale à ton nom.', 'err');
       $('code').focus();
       return;
     }
@@ -476,6 +484,7 @@ td:first-child { font-weight: 600; min-width: 7em; overflow-wrap: break-word; }
     try {
       const data = await request({ action: 'set', id: slug, name, answers, code });
       if (data.code || code) saveCode(slug, data.code || code);
+      renderAnswers();
       $('code').value = '';
       dirty = false;
       say('C\'est noté, ' + name + '. Merci !', 'ok');
@@ -505,6 +514,7 @@ td:first-child { font-weight: 600; min-width: 7em; overflow-wrap: break-word; }
     try {
       await request({ action: 'delete', id: slug, code });
       saveCode(slug, '');
+      renderAnswers();
       fillAnswers({});
       $('nom').value = '';
       $('code').value = '';
@@ -617,7 +627,7 @@ td:first-child { font-weight: 600; min-width: 7em; overflow-wrap: break-word; }
         cell.append(mark);
       }
       const act = row.insertCell();
-      if (mode === 'live') {
+      if (mode === 'live' && savedCode(p.slug)) {
         const edit = document.createElement('button');
         edit.type = 'button';
         edit.className = 'edit';
@@ -647,7 +657,7 @@ td:first-child { font-weight: 600; min-width: 7em; overflow-wrap: break-word; }
     }
     people = next;
     renderAnswers();
-    if (!dirty && !Object.keys(readAnswers()).length && $('nom').value.trim()) {
+    if (!dirty && !Object.keys(readAnswers()).length && savedCode(slugOf($('nom').value.trim()))) {
       loadPerson(slugOf($('nom').value.trim()), false);
     }
     syncNameHint();
