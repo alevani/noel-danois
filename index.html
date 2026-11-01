@@ -263,7 +263,6 @@ td:first-child { font-weight: 600; min-width: 7em; overflow-wrap: break-word; }
   ];
   const $ = (id) => document.getElementById(id);
   const SVG = 'http://www.w3.org/2000/svg';
-  const REMEMBER = 'noel-danois-nom';
   const CODES = 'noel-danois-codes';
 
   /* ---------- Dice ---------- */
@@ -357,12 +356,6 @@ td:first-child { font-weight: 600; min-width: 7em; overflow-wrap: break-word; }
     const s = $('statut');
     s.textContent = text;
     s.className = kind || '';
-  }
-  function remember(name) {
-    try { localStorage.setItem(REMEMBER, name); } catch (e) { /* optional */ }
-  }
-  function remembered() {
-    try { return localStorage.getItem(REMEMBER) || ''; } catch (e) { return ''; }
   }
   function savedCodes() {
     try { return JSON.parse(localStorage.getItem(CODES)) || {}; } catch (e) { return {}; }
@@ -468,7 +461,6 @@ td:first-child { font-weight: 600; min-width: 7em; overflow-wrap: break-word; }
       form.querySelector('input[name="' + missing[0].id + '"]').focus();
       return;
     }
-    remember(name);
     if (mode !== 'live') {
       say('Les réponses ne sont pas encore ouvertes. Réessaie un peu plus tard.', 'err');
       return;
@@ -681,8 +673,6 @@ td:first-child { font-weight: 600; min-width: 7em; overflow-wrap: break-word; }
     });
   }
 
-  const name = remembered();
-  if (name) $('nom').value = name;
   if (mode === 'closed') {
     $('resume').textContent = 'Le tableau s\'ouvrira très bientôt.';
     return;
