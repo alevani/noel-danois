@@ -14,7 +14,7 @@
   --band: #b3122a; --on-band: #fff7f5; --on-band-soft: #fbdcd9;
   --accent: #b3122a; --on-accent: #ffffff;
   --yes: #1f6b52; --on-yes: #ffffff; --maybe: #9a5d00; --on-maybe: #ffffff; --no: #6f5a5c; --on-no: #ffffff;
-  --heart-a: #fff7f5; --heart-b: #5e0916;
+  --heart-a: #fff7f5; --heart-b: #5e0916; --snow: #b4c6d8;
   --display: "Caprasimo", "Cooper Black", Georgia, serif;
   --body: "Figtree", -apple-system, "Segoe UI", Roboto, sans-serif;
 }
@@ -22,14 +22,14 @@
   --bg: #1a0f11; --fg: #f6eaea; --muted: #bfaaac; --surface: #26171a; --soft: #341e22; --line: #472c31;
   --band: #8e1023; --on-band: #fff7f5; --on-band-soft: #f6cfcf;
   --accent: #f0788a; --on-accent: #2a0a10;
-  --yes: #6fd3ae; --on-yes: #0c2a20; --maybe: #edb458; --on-maybe: #2e1d00; --no: #8d797b; --on-no: #1a0f11;
+  --yes: #6fd3ae; --on-yes: #0c2a20; --maybe: #edb458; --on-maybe: #2e1d00; --no: #8d797b; --on-no: #1a0f11; --snow: #ffffff;
   color-scheme: dark;
 } }
 :root[data-theme="dark"] {
   --bg: #1a0f11; --fg: #f6eaea; --muted: #bfaaac; --surface: #26171a; --soft: #341e22; --line: #472c31;
   --band: #8e1023; --on-band: #fff7f5; --on-band-soft: #f6cfcf;
   --accent: #f0788a; --on-accent: #2a0a10;
-  --yes: #6fd3ae; --on-yes: #0c2a20; --maybe: #edb458; --on-maybe: #2e1d00; --no: #8d797b; --on-no: #1a0f11;
+  --yes: #6fd3ae; --on-yes: #0c2a20; --maybe: #edb458; --on-maybe: #2e1d00; --no: #8d797b; --on-no: #1a0f11; --snow: #ffffff;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -49,8 +49,6 @@ a { color: inherit; }
 .eyebrow { font-weight: 600; letter-spacing: .06em; color: var(--on-band-soft); }
 h1 { font-size: clamp(2.6rem, 8vw, 4.6rem); }
 .lede { max-width: 34rem; font-size: 1.2rem; line-height: 1.5; }
-.cta { display: inline-block; background: var(--on-band); color: var(--heart-b); font-weight: 700; padding: 12px 20px; border-radius: 6px; text-decoration: none; margin-top: 6px; }
-.cta:focus-visible { outline-color: var(--on-band); }
 .garland { width: clamp(130px, 24vw, 250px); margin-top: -40px; transform-origin: 50% 0; animation: sway 7s ease-in-out infinite alternate; }
 .garland svg { display: block; width: 100%; height: auto; overflow: visible; }
 .thread { stroke: var(--on-band-soft); stroke-width: .8; }
@@ -123,6 +121,7 @@ td:first-child { font-weight: 600; overflow-wrap: anywhere; }
 .mark-non { color: var(--muted); }
 .edit { font: 500 .9rem var(--body); color: var(--muted); background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; }
 .empty { padding: 26px 18px; color: var(--muted); }
+#neige { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
 @media (max-width: 820px) {
@@ -141,13 +140,13 @@ td:first-child { font-weight: 600; overflow-wrap: anywhere; }
 </style>
 </head>
 <body>
+<canvas id="neige" aria-hidden="true"></canvas>
 <header class="hero">
   <div class="wrap hero-in">
     <div class="hero-text">
       <p class="eyebrow" lang="da">Glædelig jul</p>
       <h1>Un Noël danois à Genève</h1>
       <p class="lede">Une soirée chaleureuse entre amis, autour d'une fondue ou d'une raclette. Dis-nous quelles dates te conviennent.</p>
-      <a class="cta" href="#dispos">Donner mes disponibilités</a>
     </div>
     <div class="garland" aria-hidden="true">
       <svg viewBox="0 0 100 150">
@@ -178,7 +177,7 @@ td:first-child { font-weight: 600; overflow-wrap: anywhere; }
       <section>
         <h2 lang="da">Le pakkeleg</h2>
         <h3>Ce que tu apportes</h3>
-        <p>Deux ou trois petits cadeaux emballés : du chocolat, des bonbons, un objet rigolo. Compte 3 à 4 francs par cadeau. Tout va au milieu de la table.</p>
+        <p>Deux ou trois petits cadeaux emballés : du chocolat, des bonbons, un objet rigolo ou une trouvaille de récup. Pas besoin de dépenser beaucoup, le plus important c'est d'être ensemble et de s'amuser. Tout va au milieu de la table.</p>
         <h3>Comment on joue</h3>
         <ol class="steps">
           <li>
@@ -630,6 +629,87 @@ td:first-child { font-weight: 600; overflow-wrap: anywhere; }
   refresh();
   setInterval(() => { if (!document.hidden) refresh(); }, 30000);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
+})();
+</script>
+<script>
+(function () {
+  // Falling snow, drawn on a layer that lets every click through.
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const canvas = document.getElementById('neige');
+  const ctx = canvas.getContext('2d');
+  const scheme = matchMedia('(prefers-color-scheme: dark)');
+  let width = 0, height = 0, flakes = [], color = '#ffffff', last = 0;
+
+  function spawn(anywhere) {
+    const size = 1 + Math.random() * Math.random() * 4;
+    return {
+      x: Math.random() * width,
+      y: anywhere ? Math.random() * height : -10,
+      size,
+      fall: 14 + size * 11,
+      sway: 6 + Math.random() * 14,
+      phase: Math.random() * 6.28,
+      spin: Math.random() * 6.28,
+      alpha: 0.35 + Math.random() * 0.5
+    };
+  }
+  function resize() {
+    const ratio = Math.min(window.devicePixelRatio || 1, 2);
+    width = innerWidth;
+    height = innerHeight;
+    canvas.width = width * ratio;
+    canvas.height = height * ratio;
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    const count = Math.min(90, Math.round(width / 13));
+    while (flakes.length < count) flakes.push(spawn(true));
+    flakes.length = count;
+  }
+  function readColor() {
+    color = getComputedStyle(document.documentElement).getPropertyValue('--snow').trim() || color;
+  }
+  function draw(f) {
+    ctx.globalAlpha = f.alpha;
+    if (f.size < 2.6) {
+      ctx.beginPath();
+      ctx.arc(f.x, f.y, f.size * 0.7, 0, 6.29);
+      ctx.fill();
+      return;
+    }
+    ctx.save();
+    ctx.translate(f.x, f.y);
+    ctx.rotate(f.spin);
+    ctx.lineWidth = 0.9;
+    ctx.beginPath();
+    for (let arm = 0; arm < 3; arm++) {
+      ctx.rotate(1.0472);
+      ctx.moveTo(-f.size * 1.5, 0);
+      ctx.lineTo(f.size * 1.5, 0);
+    }
+    ctx.stroke();
+    ctx.restore();
+  }
+  function frame(now) {
+    const dt = Math.min((now - last) / 1000, 0.1);
+    last = now;
+    ctx.clearRect(0, 0, width, height);
+    ctx.fillStyle = color;
+    ctx.strokeStyle = color;
+    flakes.forEach((f, i) => {
+      f.phase += dt * 0.8;
+      f.spin += dt * 0.3;
+      f.y += f.fall * dt;
+      f.x += Math.sin(f.phase) * f.sway * dt;
+      if (f.y > height + 10) flakes[i] = spawn(false);
+      else draw(f);
+    });
+    requestAnimationFrame(frame);
+  }
+  readColor();
+  resize();
+  addEventListener('resize', resize);
+  scheme.addEventListener('change', readColor);
+  new MutationObserver(readColor).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  requestAnimationFrame((now) => { last = now; frame(now); });
 })();
 </script>
 </body>
