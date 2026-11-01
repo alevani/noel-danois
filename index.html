@@ -81,8 +81,9 @@ input[type="text"] { width: 100%; font: 400 1.0625rem var(--body); color: var(--
 .hint { font-size: .925rem; color: var(--muted); }
 .weekends { display: grid; gap: 14px; }
 .weekend { display: grid; gap: 6px; padding-top: 14px; border-top: 1px solid var(--line); }
-.day { display: grid; grid-template-columns: 3.9rem minmax(0, 1fr); gap: 8px; align-items: center; }
-.day-label { font-weight: 600; font-variant-numeric: tabular-nums; }
+.weekend-name { font-weight: 700; }
+.day { display: grid; grid-template-columns: 4.1rem minmax(0, 1fr); gap: 8px; align-items: center; }
+.day-label { font-weight: 500; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .choices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
 .choices label { display: block; cursor: pointer; }
 .choices input { position: absolute; opacity: 0; width: 1px; height: 1px; }
@@ -106,7 +107,7 @@ input[type="text"] { width: 100%; font: 400 1.0625rem var(--body); color: var(--
 #resume { max-width: 40rem; }
 .scroller:empty { display: none; }
 .scroller { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
-table { width: 100%; min-width: 820px; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+table { width: 100%; min-width: 860px; border-collapse: collapse; font-variant-numeric: tabular-nums; }
 th, td { padding: 10px 8px; text-align: center; border-bottom: 1px solid var(--line); }
 tr:last-child td { border-bottom: 0; }
 th:first-child, td:first-child { text-align: left; }
@@ -115,6 +116,7 @@ thead small { display: block; font-size: .85rem; font-weight: 500; color: var(--
 td:first-child { font-weight: 600; overflow-wrap: anywhere; }
 .best { background: var(--soft); }
 .starts { border-left: 2px solid var(--line); }
+.weekend-head { font-size: .9rem; }
 .mark { display: inline-block; min-width: 2em; line-height: 1.7; font-weight: 700; border-radius: 4px; font-size: .95rem; }
 .mark-oui { background: var(--yes); color: var(--on-yes); }
 .mark-peutetre { background: var(--maybe); color: var(--on-maybe); }
@@ -233,22 +235,24 @@ td:first-child { font-weight: 600; overflow-wrap: anywhere; }
 
 <script>
 (function () {
-  // Day ids stay fixed: a label can change without touching stored answers.
   // Adresse de l'application Web Apps Script (voir apps-script/Code.gs).
   const API_URL = '';
 
+  // Day ids stay fixed: a label can change without touching stored answers.
   const DAYS = [
-    { id: 'd1', label: '22 nov.', weekend: 1 },
-    { id: 'd2', label: '23 nov.', weekend: 1 },
-    { id: 'd3', label: '29 nov.', weekend: 2 },
-    { id: 'd4', label: '30 nov.', weekend: 2 },
-    { id: 'd5', label: '6 déc.', weekend: 3 },
-    { id: 'd6', label: '7 déc.', weekend: 3 },
-    { id: 'd7', label: '13 déc.', weekend: 4 },
-    { id: 'd8', label: '14 déc.', weekend: 4 },
-    { id: 'd9', label: '20 déc.', weekend: 5 },
-    { id: 'd10', label: '21 déc.', weekend: 5 }
+    { id: 'd1', label: 'ven. 20 nov.', weekend: 1 },
+    { id: 'd2', label: 'sam. 21 nov.', weekend: 1 },
+    { id: 'd3', label: 'ven. 27 nov.', weekend: 2 },
+    { id: 'd4', label: 'sam. 28 nov.', weekend: 2 },
+    { id: 'd5', label: 'ven. 4 déc.', weekend: 3 },
+    { id: 'd6', label: 'sam. 5 déc.', weekend: 3 },
+    { id: 'd7', label: 'ven. 11 déc.', weekend: 4 },
+    { id: 'd8', label: 'sam. 12 déc.', weekend: 4 },
+    { id: 'd9', label: 'ven. 18 déc.', weekend: 5 },
+    { id: 'd10', label: 'sam. 19 déc.', weekend: 5 }
   ];
+  const WEEKEND_NAMES = ['20 et 21 novembre', '27 et 28 novembre', '4 et 5 décembre', '11 et 12 décembre', '18 et 19 décembre'];
+  const dayOnly = (day) => day.label.split(' ').slice(0, 2).join(' ');
   const CHOICES = [
     { value: 'oui', label: 'Dispo', glyph: '✓' },
     { value: 'peutetre', label: 'Peut-être', glyph: '?' },
@@ -304,16 +308,19 @@ td:first-child { font-weight: 600; overflow-wrap: anywhere; }
       groupOf = day.weekend;
       group = document.createElement('div');
       group.className = 'weekend';
+      const heading = document.createElement('p');
+      heading.className = 'weekend-name';
+      heading.textContent = WEEKEND_NAMES[day.weekend - 1];
+      group.append(heading);
       $('weekends').append(group);
     }
     const line = document.createElement('div');
     line.className = 'day';
     line.setAttribute('role', 'radiogroup');
-    line.setAttribute('aria-labelledby', 'label-' + day.id);
+    line.setAttribute('aria-label', day.label);
     const title = document.createElement('span');
     title.className = 'day-label';
-    title.id = 'label-' + day.id;
-    title.textContent = day.label;
+    title.textContent = dayOnly(day);
     const row = document.createElement('div');
     row.className = 'choices';
     for (const c of CHOICES) {
@@ -505,28 +512,40 @@ td:first-child { font-weight: 600; overflow-wrap: anywhere; }
     const firstOfWeekend = new Set(DAYS.filter((day, i) => !i || DAYS[i - 1].weekend !== day.weekend).map((day) => day.id));
     const cellClass = (id) => [best.has(id) ? 'best' : '', firstOfWeekend.has(id) ? 'starts' : ''].join(' ').trim();
     const table = document.createElement('table');
-    const thead = table.createTHead().insertRow();
+    const head = table.createTHead();
+    const weekendRow = head.insertRow();
+    const dayRow = head.insertRow();
     const corner = document.createElement('th');
     corner.scope = 'col';
+    corner.rowSpan = 2;
     corner.textContent = 'Nom';
-    thead.append(corner);
-    for (const t of totals) {
+    weekendRow.append(corner);
+    WEEKEND_NAMES.forEach((title) => {
       const th = document.createElement('th');
-      th.scope = 'col';
-      th.className = cellClass(t.id);
-      th.textContent = t.label;
-      const sub = document.createElement('small');
-      sub.textContent = t.yes + ' ✓' + (t.maybe ? ' · ' + t.maybe + ' ?' : '');
-      th.append(sub);
-      thead.append(th);
-    }
+      th.scope = 'colgroup';
+      th.colSpan = 2;
+      th.className = 'starts weekend-head';
+      th.textContent = title;
+      weekendRow.append(th);
+    });
     const blank = document.createElement('th');
     blank.scope = 'col';
+    blank.rowSpan = 2;
     const blankText = document.createElement('span');
     blankText.className = 'sr';
     blankText.textContent = 'Modifier';
     blank.append(blankText);
-    thead.append(blank);
+    weekendRow.append(blank);
+    totals.forEach((t, i) => {
+      const th = document.createElement('th');
+      th.scope = 'col';
+      th.className = cellClass(t.id);
+      th.textContent = dayOnly(DAYS[i]);
+      const sub = document.createElement('small');
+      sub.textContent = t.yes + ' ✓' + (t.maybe ? ' · ' + t.maybe + ' ?' : '');
+      th.append(sub);
+      dayRow.append(th);
+    });
 
     const body = table.createTBody();
     for (const p of list) {

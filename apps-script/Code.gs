@@ -1,6 +1,6 @@
 // À coller dans la feuille Google : Extensions > Apps Script.
 const SHEET_NAME = 'Réponses';
-const LABELS = ['22 nov.', '23 nov.', '29 nov.', '30 nov.', '6 déc.', '7 déc.', '13 déc.', '14 déc.', '20 déc.', '21 déc.'];
+const LABELS = ['ven. 20 nov.', 'sam. 21 nov.', 'ven. 27 nov.', 'sam. 28 nov.', 'ven. 4 déc.', 'sam. 5 déc.', 'ven. 11 déc.', 'sam. 12 déc.', 'ven. 18 déc.', 'sam. 19 déc.'];
 const DAYS = ['d1', 'd2', 'd3', 'd4', 'd5', 'd6', 'd7', 'd8', 'd9', 'd10'];
 const CHOICES = { oui: 'Dispo', peutetre: 'Peut-être', non: 'Pas dispo' };
 const COLUMNS = DAYS.length + 3; // id, nom, dates, mise à jour
